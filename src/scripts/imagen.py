@@ -2,7 +2,7 @@ import os
 import argparse
 import torch
 
-from compose_glide import ComposeGlide
+from facet import Facet
 from PIL import Image
 
 
@@ -48,15 +48,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
     os.makedirs(args.output_dir, exist_ok=True)
 
-    compose_glide = ComposeGlide(model_name='glide_faces', verbose=True)
-    print(compose_glide)
+    facet = Facet(model_name='glide_faces', verbose=True)
+    print(facet)
 
     # for i, prompt in enumerate(compositional_prompts):
     #     for j in range(NUM_VARIANTS):
 
     #         print(f"Generating image for prompt {i} variant {j}")
 
-    #         result, _ = compose_glide.generate(
+    #         result, _ = facet.generate(
     #             prompt, 
     #             num_images=1, 
     #             upsample=True, 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
             print(f"Generating image for prompt {i} variant {j}")
 
-            result, _ = compose_glide.generate(
+            result, _ = facet.generate(
                 prompt, 
                 num_images=1, 
                 upsample=True, 

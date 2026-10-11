@@ -13,22 +13,23 @@
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License" />
 </p>
 
-Facet fine-tunes OpenAI's open-source [GLIDE](https://github.com/openai/glide-text2im) text-to-image diffusion model on CelebA with LoRA. The fine-tuned model is then used with composable diffusion ([Liu et al., 2022](https://arxiv.org/abs/2206.01714)) to generate faces from prompts that combine and negate attributes, such as **a woman AND smiling AND NOT glasses**. The project also adds cross-attention visualization and a classifier-based benchmark that checks whether each attribute in a prompt appears in the generated image.
+Facet fine-tunes OpenAI's open-source [GLIDE](https://github.com/openai/glide-text2im) text-to-image diffusion model on CelebA with LoRA. The fine-tuned model is then used with composable diffusion ([Liu et al., 2022](https://arxiv.org/abs/2206.01714)) to generate faces from prompts that combine and negate attributes, such as **a woman AND smiling AND NOT glasses**. The project also includes a classifier-based benchmark that checks whether each attribute in a prompt appears in the generated image, and an experimental attention-heatmap tool.
 
 ## Overview
 
-- **Parameter-efficient fine-tuning.** LoRA adapters (rank 8, α 16, dropout 0.1) are added to the attention projections (`qkv`, `c_proj`) of the pretrained 64×64 GLIDE base model and trained with the standard noise-prediction (MSE) objective, using fp16 mixed precision on CUDA. After training, the adapters are merged into a standalone checkpoint.
+- **Parameter-efficient fine-tuning.** LoRA adapters (rank 8, α 16, dropout 0.1) are added to the pretrained 64×64 GLIDE base model, on the U-Net's attention `qkv` projections and the text transformer's `c_proj` output projections. They are trained with the standard noise-prediction (MSE) objective, using fp16 mixed precision on CUDA. After training, the adapters are merged into a standalone checkpoint.
 - **Captions from attributes.** CelebA's binary labels for gender, smiling and eyeglasses are turned into text captions such as *a woman smiling no glasses*, so the model learns to associate each attribute with its words.
-- **Composed guidance.** A prompt is split on `AND` into concepts. Each concept gets a classifier-free guidance term, and the terms are summed with per-concept weights; `NOT` flips a concept's weight to steer away from it. GLIDE's upsampler then produces the 256×256 image.
+- **Composed guidance.** A prompt is split on `AND` into concepts. Each concept gets a classifier-free guidance term, and the terms are summed with per-concept weights; `NOT` flips a concept's weight to steer away from it. GLIDE's original upsampler then produces the 256×256 image. It is conditioned on all concepts joined as plain text, so `NOT` only takes effect in the base model.
 - **Automatic concept weights.** Weights can be written explicitly (`smiling:9.5`). Otherwise they are derived from CLIP text embeddings, so concepts that overlap less with the rest of the prompt get more weight.
-- **Explainability and evaluation.** GLIDE's attention layers are patched to record cross-attention during sampling, which is rendered as one heatmap per concept. A benchmark scores generated images with ResNet-18 attribute classifiers.
+- **Evaluation.** A benchmark scores generated images with ResNet-18 attribute classifiers for smiling, eyeglasses and gender.
+- **Attention heatmaps (experimental).** GLIDE's attention layers are patched to record attention weights during sampling, which are rendered as heatmaps over the image. The recorded weights are the image's self-attention rather than its attention to the prompt's words, so the heatmaps are not tied to individual concepts. They come from the last stage that ran: the upsampler when `upsample=True`, otherwise the base model.
 - **Apple Silicon.** A modified copy of GLIDE runs on MPS.
 
 <p align="center">
-  <img src="images/pipeline.svg" alt="Facet pipeline: CelebA images and attribute captions are used to LoRA fine-tune the GLIDE base model, whose merged weights are then used for compositional sampling, where a prompt is split into weighted concepts, combined with composed classifier-free guidance, upsampled to 256 pixels, and explained with per-concept cross-attention maps" width="100%" />
+  <img src="images/pipeline.svg" alt="Facet pipeline: CelebA images and attribute captions are used to LoRA fine-tune the GLIDE base model, whose merged weights are then used for compositional sampling, where a prompt is split into weighted concepts, combined with composed classifier-free guidance, upsampled to 256 pixels, and visualised with experimental attention heatmaps" width="100%" />
 </p>
 
-<p align="center"><sub><b>Figure 1.</b> Fine-tuning GLIDE on CelebA (top) and sampling from the fine-tuned model with composed guidance (bottom).</sub></p>
+<p align="center"><sub><b>Figure 1.</b> Fine-tuning GLIDE on CelebA (top) and sampling from the fine-tuned model with composed guidance (bottom). Dashed parts are experimental.</sub></p>
 
 <!--
 ## Results
@@ -59,20 +60,23 @@ cp checkpoints/glide_celeba_lora_finetuned_full.pt models/glide_faces.pt
 ```
 
 ```python
-from compose_glide import ComposeGlide
+from facet import Facet
 
-compose_glide = ComposeGlide(model_name='glide_faces')
+facet = Facet(model_name='glide_faces')
 
-result, attention_data = compose_glide.generate(
-    "a woman AND smiling AND NOT glasses",
+prompt = "a woman AND smiling AND NOT glasses"
+
+result, attention_data = facet.generate(
+    prompt,
     num_images=1,
     upsample=True,
     upsample_temp=0.995,
     return_attention_maps=True,
 )
 
-compose_glide.visualize_attention_maps(
-    result[0], attention_data[0], "a woman AND smiling AND NOT glasses",
+# Experimental: the visualizer splits concepts on lowercase "and"
+facet.visualize_attention_maps(
+    result[0], attention_data[0], prompt.lower(),
     output_path="attention.png", show_plot=False,
 )
 ```
@@ -96,7 +100,7 @@ Use `model_name='base'` to run the same compositional sampling on the original, 
 
 - **Adapters.** Each saved epoch writes the LoRA adapter weights and a `checkpoint.pt` with the optimizer state, epoch and best loss to `checkpoints/epoch_N/`. The lowest-loss epoch is also copied to `checkpoints/best/`.
 - **Merged model.** When training finishes, the adapters are merged into the base weights and saved as `checkpoints/glide_celeba_lora_finetuned_full.pt`. This is a regular GLIDE state dict and needs no PEFT at inference time.
-- **Loading.** `ComposeGlide(model_name='glide_faces')` loads `models/glide_faces.pt`. To use a different file, set `GLIDE_FACES_PATH=/path/to/checkpoint.pt`.
+- **Loading.** `Facet(model_name='glide_faces')` loads `models/glide_faces.pt`. To use a different file, set `GLIDE_FACES_PATH=/path/to/checkpoint.pt`.
 
 </details>
 
@@ -131,7 +135,7 @@ The fine-tuned model is loaded by Facet itself, so it works with both versions. 
 | `a woman AND NOT glasses` | Steer towards *a woman* and away from *glasses* |
 | `a woman:9.5 AND smiling:5` | Explicit guidance weight per concept |
 
-Prompts are lowercased, so `AND`/`and` and `NOT`/`not` are equivalent. Concepts without an explicit weight default to 7.5 if CLIP weighting fails.
+Prompts are lowercased, so `AND`/`and` and `NOT`/`not` are equivalent. `NOT` and the weights apply to the base model only; the upsampler receives every concept, negated or not, joined as plain text. Concepts without an explicit weight default to 7.5 if CLIP weighting fails.
 
 </details>
 
@@ -180,7 +184,7 @@ compose-glide/
 ├── notebooks/
 │   └── demo.ipynb           # GLIDE vs Facet, base and fine-tuned
 ├── src/
-│   ├── compose_glide/
+│   ├── facet/
 │   │   ├── model.py         # Compositional sampling and attention capture
 │   │   ├── utils.py         # Prompt parsing and CLIP-based weights
 │   │   └── dataset/         # CelebA dataset and caption generation

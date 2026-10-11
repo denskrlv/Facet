@@ -11,7 +11,7 @@ from torch.cuda.amp import autocast, GradScaler
 from torchvision.transforms import InterpolationMode
 from torchvision.transforms.functional import resize
 
-from compose_glide.dataset.celeba import CelebA_Dataset, get_ffhq_dataloader
+from facet.dataset.celeba import CelebA_Dataset, get_ffhq_dataloader
 
 # NEW: Import the PEFT library for LoRA
 from peft import LoraConfig, get_peft_model

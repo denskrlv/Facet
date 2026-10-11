@@ -54,18 +54,22 @@
     <text x="585" y="242" font-size="12" fill="#4B5563">ε = ε∅ + Σ wᵢ (εᵢ − ε∅)</text>
 
     <rect x="720" y="192" width="190" height="70" rx="8" fill="#ECFDF5" stroke="#10B981"/>
-    <text x="815" y="222" font-weight="600" fill="#1F2937">GLIDE upsampler</text>
-    <text x="815" y="242" font-size="12" fill="#4B5563">64 → 256 px</text>
+    <text x="815" y="214" font-weight="600" fill="#1F2937">GLIDE upsampler</text>
+    <text x="815" y="234" font-size="12" fill="#4B5563">64 → 256 px</text>
+    <text x="815" y="250" font-size="12" fill="#4B5563">text: concepts joined, no NOT</text>
 
-    <rect x="490" y="296" width="190" height="56" rx="8" fill="#FFF7ED" stroke="#F59E0B"/>
-    <text x="585" y="320" font-weight="600" fill="#1F2937">Cross-attention maps</text>
-    <text x="585" y="338" font-size="12" fill="#4B5563">one heatmap per concept</text>
+    <rect x="590" y="296" width="220" height="56" rx="8" fill="#FFF7ED" stroke="#F59E0B" stroke-dasharray="5 4"/>
+    <text x="700" y="320" font-weight="600" fill="#1F2937">Attention heatmaps</text>
+    <text x="700" y="338" font-size="12" fill="#4B5563">experimental · last stage run</text>
   </g>
 
   <g stroke="#6B7280" stroke-width="1.5" fill="none" marker-end="url(#arrow)">
     <line x1="220" y1="227" x2="258" y2="227"/>
     <line x1="450" y1="227" x2="488" y2="227"/>
     <line x1="680" y1="227" x2="718" y2="227"/>
-    <line x1="585" y1="262" x2="585" y2="294"/>
+  </g>
+  <g stroke="#6B7280" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#arrow)">
+    <path d="M585,262 V279 H650 V294"/>
+    <path d="M815,262 V279 H750 V294"/>
   </g>
 </svg>

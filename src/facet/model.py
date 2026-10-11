@@ -13,13 +13,13 @@ from glide_text2im.model_creation import (
     model_and_diffusion_defaults_upsampler
 )
 from glide_text2im.unet import QKVAttention
-from compose_glide.utils import get_gpu, prepare_prompt
+from facet.utils import get_gpu, prepare_prompt
 
 # Fine-tuned checkpoint produced by src/scripts/fine_tune.py
 GLIDE_FACES_PATH = os.environ.get("GLIDE_FACES_PATH", os.path.join("models", "glide_faces.pt"))
 
 
-class ComposeGlide:
+class Facet:
     
     def __init__(self, model_name='base', device=None, verbose: bool=True):
         if device is None:
@@ -561,7 +561,7 @@ class ComposeGlide:
         up_params = sum(p.numel() for p in self.up_model.parameters()) if self.up_model else 0
 
         table = []
-        table.append(f"{'ComposeGLIDE Instance Configuration':^60}")
+        table.append(f"{'Facet Instance Configuration':^60}")
         table.append("=" * 60)
         table.append(f"{'Device:':<30} {str(self.device):<28}")
         table.append(f"{'Verbose:':<30} {str(self.verbose):<28}")
