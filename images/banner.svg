@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#1E1B4B"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="400" rx="20" fill="url(#bg)"/>
+
+  <g transform="translate(137 0)">
+  <!-- Mark: a gem whose facets are the three attributes -->
+  <g transform="translate(230 200) scale(1.75)" stroke="#0F172A" stroke-width="1.5" stroke-linejoin="round">
+    <polygon points="0,0 -52,-30 0,-60" fill="#A5B4FC"/>
+    <polygon points="0,0 0,-60 52,-30" fill="#6366F1"/>
+    <polygon points="0,0 52,-30 52,30" fill="#5EEAD4"/>
+    <polygon points="0,0 52,30 0,60" fill="#14B8A6"/>
+    <polygon points="0,0 0,60 -52,30" fill="#F59E0B"/>
+    <polygon points="0,0 -52,30 -52,-30" fill="#FCD34D"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="380" y="190" font-size="104" font-weight="800" fill="#F8FAFC" letter-spacing="-2">Facet</text>
+  <text x="384" y="242" font-size="26" fill="#CBD5E1">Compositional face generation with a LoRA-tuned GLIDE</text>
+
+  <!-- Example prompt, coloured like the facets -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="20" text-anchor="middle">
+    <rect x="384" y="282" width="112" height="38" rx="19" fill="#6366F1" fill-opacity="0.22" stroke="#818CF8"/>
+    <text x="440" y="308" fill="#C7D2FE">a woman</text>
+    <text x="524" y="308" fill="#64748B">AND</text>
+    <rect x="552" y="282" width="112" height="38" rx="19" fill="#14B8A6" fill-opacity="0.22" stroke="#2DD4BF"/>
+    <text x="608" y="308" fill="#99F6E4">smiling</text>
+    <text x="692" y="308" fill="#64748B">AND</text>
+    <rect x="720" y="282" width="160" height="38" rx="19" fill="#F59E0B" fill-opacity="0.22" stroke="#FBBF24"/>
+    <text x="800" y="308" fill="#FDE68A">NOT glasses</text>
+  </g>
+  </g>
+</svg>

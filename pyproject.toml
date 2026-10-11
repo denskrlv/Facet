@@ -3,9 +3,9 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "compose-glide"
+name = "facet"
 version = "0.1.0"
-description = "Text-to-image generation using enhanced GLIDE models"
+description = "Compositional face generation with a LoRA-tuned GLIDE"
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}

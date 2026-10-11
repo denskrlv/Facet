@@ -1,4 +1,6 @@
-<h1 align="center">ComposeGlide</h1>
+<p align="center">
+  <img src="images/banner.svg" alt="Facet: compositional face generation with a LoRA-tuned GLIDE" width="100%" />
+</p>
 
 <p align="center">
   <b>LoRA Fine-Tuning of OpenAI's GLIDE for Compositional Face Generation</b>
@@ -11,7 +13,7 @@
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License" />
 </p>
 
-ComposeGlide fine-tunes OpenAI's open-source [GLIDE](https://github.com/openai/glide-text2im) text-to-image diffusion model on CelebA with LoRA. The fine-tuned model is then used with composable diffusion ([Liu et al., 2022](https://arxiv.org/abs/2206.01714)) to generate faces from prompts that combine and negate attributes, such as **a woman AND smiling AND NOT glasses**. The project also adds cross-attention visualization and a classifier-based benchmark that checks whether each attribute in a prompt appears in the generated image.
+Facet fine-tunes OpenAI's open-source [GLIDE](https://github.com/openai/glide-text2im) text-to-image diffusion model on CelebA with LoRA. The fine-tuned model is then used with composable diffusion ([Liu et al., 2022](https://arxiv.org/abs/2206.01714)) to generate faces from prompts that combine and negate attributes, such as **a woman AND smiling AND NOT glasses**. The project also adds cross-attention visualization and a classifier-based benchmark that checks whether each attribute in a prompt appears in the generated image.
 
 ## Overview
 
@@ -23,7 +25,7 @@ ComposeGlide fine-tunes OpenAI's open-source [GLIDE](https://github.com/openai/g
 - **Apple Silicon.** A modified copy of GLIDE runs on MPS.
 
 <p align="center">
-  <img src="images/pipeline.svg" alt="ComposeGlide pipeline: CelebA images and attribute captions are used to LoRA fine-tune the GLIDE base model, whose merged weights are then used for compositional sampling, where a prompt is split into weighted concepts, combined with composed classifier-free guidance, upsampled to 256 pixels, and explained with per-concept cross-attention maps" width="100%" />
+  <img src="images/pipeline.svg" alt="Facet pipeline: CelebA images and attribute captions are used to LoRA fine-tune the GLIDE base model, whose merged weights are then used for compositional sampling, where a prompt is split into weighted concepts, combined with composed classifier-free guidance, upsampled to 256 pixels, and explained with per-concept cross-attention maps" width="100%" />
 </p>
 
 <p align="center"><sub><b>Figure 1.</b> Fine-tuning GLIDE on CelebA (top) and sampling from the fine-tuned model with composed guidance (bottom).</sub></p>
@@ -34,7 +36,7 @@ ComposeGlide fine-tunes OpenAI's open-source [GLIDE](https://github.com/openai/g
 | Model | Prompt | Smile ↑ | Glasses ↑ | Gender ↑ | All attributes ↑ |
 |---|---|---|---|---|---|
 | GLIDE (base) | | | | | |
-| ComposeGlide (fine-tuned) | | | | | |
+| Facet (fine-tuned) | | | | | |
 -->
 
 ## Quick start
@@ -51,7 +53,7 @@ pip install -e .
 # 2. Fine-tune (downloads CelebA via kagglehub if --dataset is omitted)
 python -m src.scripts.fine_tune --checkpoint_dir checkpoints --num_epochs 20
 
-# 3. Put the merged checkpoint where ComposeGlide looks for it
+# 3. Put the merged checkpoint where Facet looks for it
 mkdir -p models
 cp checkpoints/glide_celeba_lora_finetuned_full.pt models/glide_faces.pt
 ```
@@ -114,7 +116,7 @@ pip install -e ./glide-text2im
 pip install -e .
 ```
 
-The fine-tuned model is loaded by ComposeGlide itself, so it works with both versions. Allow at least 32 GB of RAM.
+The fine-tuned model is loaded by Facet itself, so it works with both versions. Allow at least 32 GB of RAM.
 
 </details>
 
@@ -174,9 +176,9 @@ The classifiers are ResNet-18 models exported to ONNX (`resnet18_smiling_model.o
 ```
 compose-glide/
 ├── glide-text2im/           # OpenAI's GLIDE, modified for MPS
-├── images/                  # README figures
+├── images/                  # Banner and pipeline figure
 ├── notebooks/
-│   └── demo.ipynb           # GLIDE vs ComposeGlide, base and fine-tuned
+│   └── demo.ipynb           # GLIDE vs Facet, base and fine-tuned
 ├── src/
 │   ├── compose_glide/
 │   │   ├── model.py         # Compositional sampling and attention capture
@@ -202,9 +204,9 @@ The compositional sampling follows the method and reference implementation of Li
 ## Citation
 
 ```bibtex
-@software{krylov2025composeglide,
+@software{krylov2025facet,
   author = {Denis Krylov},
-  title  = {{ComposeGlide}: LoRA Fine-Tuning of OpenAI's GLIDE for Compositional Face Generation},
+  title  = {{Facet}: LoRA Fine-Tuning of OpenAI's GLIDE for Compositional Face Generation},
   year   = {2025},
   url    = {https://github.com/denskrlv/compose-glide}
 }
