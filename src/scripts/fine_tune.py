@@ -1,6 +1,7 @@
 import os
 import torch
 import argparse
+import kagglehub
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -48,9 +49,8 @@ def main():
                         help="Number of epochs to train")
     parser.add_argument("--checkpoint_freq", type=int, default=5, 
                         help="Save checkpoint every N epochs")
-    parser.add_argument("--dataset", type=str, 
-                        default="/home/deniskrylov/.cache/kagglehub/datasets/kushsheth/face-vae/versions/1", 
-                        help="Path to root directory containing images")
+    parser.add_argument("--dataset", type=str, default=None,
+                        help="Path to the CelebA root directory (downloaded via kagglehub if omitted)")
     parser.add_argument("--checkpoint_dir", type=str, default="checkpoints", 
                         help="Directory to save checkpoints")
     args = parser.parse_args()
@@ -58,6 +58,10 @@ def main():
     # Create checkpoint directory if it doesn't exist
     os.makedirs(args.checkpoint_dir, exist_ok=True)
     
+    if args.dataset is None:
+        args.dataset = kagglehub.dataset_download("kushsheth/face-vae")
+        print(f"Using dataset at: {args.dataset}")
+
     # Construct paths based on the dataset argument
     attr_file_path = os.path.join(args.dataset, "list_attr_celeba.csv")
     root_dir_path = os.path.join(args.dataset, "img_align_celeba", "img_align_celeba")

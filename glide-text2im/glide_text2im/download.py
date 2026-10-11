@@ -14,7 +14,7 @@ MODEL_PATHS = {
     "upsample-inpaint": "https://openaipublic.blob.core.windows.net/diffusion/dec-2021/upsample_inpaint.pt",
     "clip/image-enc": "https://openaipublic.blob.core.windows.net/diffusion/dec-2021/clip_image_enc.pt",
     "clip/text-enc": "https://openaipublic.blob.core.windows.net/diffusion/dec-2021/clip_text_enc.pt",
-    "glide_faces": "/Users/deniskrylov/Developer/University/compose-glide/models/glide_faces.pt"
+    "glide_faces": os.environ.get("GLIDE_FACES_PATH", os.path.join("models", "glide_faces.pt")),
 }
 
 

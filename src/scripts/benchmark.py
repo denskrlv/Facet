@@ -4,11 +4,19 @@ import numpy as np
 from glob import glob
 from tqdm import tqdm
 import os
+import argparse
+
+parser = argparse.ArgumentParser(description="Score generated images with attribute classifiers")
+parser.add_argument("--classifiers_dir", type=str, default=os.path.join("models", "binary_classifiers"),
+                    help="Directory containing the ONNX attribute classifiers")
+parser.add_argument("--output_dir", type=str, default=os.path.join("outputs", "standard", "1"),
+                    help="Directory containing generated images")
+args = parser.parse_args()
 
 # Load ONNX models
-sess_smile = ort.InferenceSession("/Users/deniskrylov/Developer/University/compose-glide/models/binary_classifiers/resnet18_smiling_model.onnx")
-sess_glasses = ort.InferenceSession("/Users/deniskrylov/Developer/University/compose-glide/models/binary_classifiers/resnet18_eyeglasses_model.onnx")
-sess_gender = ort.InferenceSession("/Users/deniskrylov/Developer/University/compose-glide/models/binary_classifiers/resnet18_male_model.onnx")
+sess_smile = ort.InferenceSession(os.path.join(args.classifiers_dir, "resnet18_smiling_model.onnx"))
+sess_glasses = ort.InferenceSession(os.path.join(args.classifiers_dir, "resnet18_eyeglasses_model.onnx"))
+sess_gender = ort.InferenceSession(os.path.join(args.classifiers_dir, "resnet18_male_model.onnx"))
 
 def preprocess(img_path):
     img = cv2.imread(img_path)
@@ -53,7 +61,7 @@ all_correct = [0] * 6  # Track when all attributes are correct
 total = [0] * 6
 
 # Output directory
-output_dir = "/Users/deniskrylov/Developer/University/compose-glide/outputs/standard/1"
+output_dir = args.output_dir
 print(f"Looking for images in: {output_dir}")
 
 for i in range(0, 2):  # Range from 0 to 5 to match prompt_targets keys
@@ -134,7 +142,7 @@ if overall_total > 0:
 # # Calculate FID score
 # def main():
 #     print("\n📊 FID Scores (Image Quality):")
-#     reference_dir = "/Users/deniskrylov/.cache/kagglehub/datasets/kushsheth/face-vae/versions/1/img_align_celeba/img_align_celeba"  # Directory with real face images
+#     reference_dir = "path/to/img_align_celeba"  # Directory with real face images
 
 #     for i in range(6):
 #         pattern = os.path.join(output_dir, f"prompt_{i}_variant_*.png")

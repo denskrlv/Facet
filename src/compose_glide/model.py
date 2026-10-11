@@ -1,4 +1,5 @@
 import math
+import os
 from matplotlib import pyplot as plt
 import numpy as np
 import torch as th
@@ -13,6 +14,9 @@ from glide_text2im.model_creation import (
 )
 from glide_text2im.unet import QKVAttention
 from compose_glide.utils import get_gpu, prepare_prompt
+
+# Fine-tuned checkpoint produced by src/scripts/fine_tune.py
+GLIDE_FACES_PATH = os.environ.get("GLIDE_FACES_PATH", os.path.join("models", "glide_faces.pt"))
 
 
 class ComposeGlide:
@@ -124,7 +128,16 @@ class ComposeGlide:
         if (self.device.type == 'cuda' and options.get('use_fp16', False)):
             model.convert_to_fp16()
         model.to(self.device)
-        model.load_state_dict(load_checkpoint(model_name, device=self.device))
+        if model_name == 'glide_faces':
+            if not os.path.exists(GLIDE_FACES_PATH):
+                raise FileNotFoundError(
+                    f"Fine-tuned model not found at {GLIDE_FACES_PATH}. "
+                    "Download it into the models folder or set GLIDE_FACES_PATH."
+                )
+            state_dict = th.load(GLIDE_FACES_PATH, map_location=self.device)
+        else:
+            state_dict = load_checkpoint(model_name, device=self.device)
+        model.load_state_dict(state_dict)
         return model, diffusion
 
     def _base_model_fn(self, x_t, ts, weights_param, **kwargs):

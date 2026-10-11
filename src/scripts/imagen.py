@@ -1,3 +1,5 @@
+import os
+import argparse
 import torch
 
 from compose_glide import ComposeGlide
@@ -40,6 +42,11 @@ def tensor_to_image(tensor):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Generate face images with the fine-tuned GLIDE model")
+    parser.add_argument("--output_dir", type=str, default=os.path.join("outputs", "standard", "1"),
+                        help="Directory to save generated images")
+    args = parser.parse_args()
+    os.makedirs(args.output_dir, exist_ok=True)
 
     compose_glide = ComposeGlide(model_name='glide_faces', verbose=True)
     print(compose_glide)
@@ -59,7 +66,7 @@ if __name__ == "__main__":
     #         )
 
     #         image = tensor_to_image(result)
-    #         image_path = f"/Users/deniskrylov/Developer/University/compose-glide/outputs/compositional/prompt_{i}_variant_{j}.png"
+    #         image_path = os.path.join(args.output_dir, f"prompt_{i}_variant_{j}.png")
     #         image.save(image_path)
     #         print(f"Saved: {image_path}!")
     
@@ -78,6 +85,6 @@ if __name__ == "__main__":
             )
 
             image = tensor_to_image(result)
-            image_path = f"/Users/deniskrylov/Developer/University/compose-glide/outputs/standard/1/prompt_{i}_variant_{j}.png"
+            image_path = os.path.join(args.output_dir, f"prompt_{i}_variant_{j}.png")
             image.save(image_path)
             print(f"Saved: {image_path}!")

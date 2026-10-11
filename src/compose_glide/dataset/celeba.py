@@ -1,14 +1,9 @@
 import os
-import kagglehub
 import torch
 import pandas as pd
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-
-
-path = kagglehub.dataset_download("kushsheth/face-vae")
-print("Path to dataset files:", path)
 
 
 class CelebA_Dataset(Dataset):
